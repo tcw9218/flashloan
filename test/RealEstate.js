@@ -57,6 +57,9 @@ describe('RealEstate', () => {
     describe('Selling realEstate', async () => {
         let balance, transaction
         it('executes a successful transaction', async () => {
+
+            balance = await ethers.provider.getBalance(seller.address)
+            console.log('seller balance', ethers.formatEther(balance))
             //expect seller to be the nft owner before the sell
             expect(await realEstate.ownerOf(nftID)).to.equal(seller.address)
 
@@ -95,8 +98,12 @@ describe('RealEstate', () => {
             await transaction.wait()
             console.log("buyer finalize sell")
 
-            //expect seller to be the nft buyer after the sell
+            //expect buyer to be the nft owner after the sell
             expect(await realEstate.ownerOf(nftID)).to.equal(buyer.address)
+
+            //expect seller to receive funds
+            balance = await ethers.provider.getBalance(seller.address)
+            console.log('seller balance', ethers.formatEther(balance))
         })
     })
 

@@ -73,6 +73,9 @@ contract Escrow {
         require(approval[seller], 'must be approved by seller');
         require(approval[lender], 'must be approved by lender');
         require(address(this).balance >= purchasePrice, 'must have enough Eth for sale');
+    
+        (bool success, ) = payable(seller).call{value: address(this).balance}("");
+        require(success);
 
         IERC721(nftAddress).transferFrom(seller, buyer, nftID);
     }
