@@ -15,6 +15,8 @@ contract Escrow {
     address public lender;
     address public inspector;
     bool public inspectionPassed = false;
+    mapping(address => bool) public approval;
+
 
     modifier onlyBuyer(){
         require(msg.sender == buyer, "Only buyer can call");
@@ -42,8 +44,8 @@ contract Escrow {
         escrowAmount = _escrowAmount;
         seller = _seller;
         buyer = _buyer;
-        lender = _lender;
         inspector = _inspector;
+         lender = _lender;
     }
     function updateInspectionStatus(bool _pass) public onlyInspector{
         inspectionPassed = _pass;
@@ -52,18 +54,30 @@ contract Escrow {
 
     function depositEarnest() public payable onlyBuyer { 
         require(msg.value >= escrowAmount);
-        
-    }
-
-
-    function finalizeSale() public {
-        //Transfer  owenerShip of property
-        IERC721(nftAddress).transferFrom(seller, buyer, nftID);
     }
 
     function getBalance() public view returns(uint) {
         return address(this).balance;
     }
+
+    function approvalSale() public {
+        approval[msg.sender] = true;
+    }
+
+    receive() external payable{}
+
+    function finalizeSale() public {
+        //Transfer  owenerShip of property
+        require(inspectionPassed, 'must paseed inspector');
+        require(approval[buyer], 'must be approved by buyer');
+        require(approval[seller], 'must be approved by seller');
+        require(approval[lender], 'must be approved by lender');
+        require(address(this).balance >= purchasePrice, 'must have enough Eth for sale');
+
+        IERC721(nftAddress).transferFrom(seller, buyer, nftID);
+    }
+
+    
 
    
 }
