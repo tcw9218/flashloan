@@ -9,7 +9,7 @@ const ether = tokens
 
 describe('RealEstate', () => {
     let realEstate, escrow
-    let deployer, seller, buyer
+    let deployer, seller, buyer, inspector
     let nftID = 1
     let purchasePrice = ether(100)
     let escrowAmount = ether(20)
@@ -67,6 +67,11 @@ describe('RealEstate', () => {
             balance = await escrow.getBalance()
             console.log("escrow balance: ", ethers.formatEther(balance))
 
+            //inspector passed
+            console.log("inspectorBBB",inspector)
+            transaction =  await escrow.connect(inspector).updateInspectionStatus(true)
+            await transaction.wait()
+            console.log("inspection staus changed")
 
             //Finale sell
             transaction =  await escrow.connect(buyer).finalizeSale()
