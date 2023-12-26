@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, web3 } = require("hardhat");
 
 const tokens = (n) => {
     return ethers.parseUnits(n.toString(), 'ether')
@@ -13,6 +13,8 @@ describe('RealEstate', () => {
     let nftID = 1
     let purchasePrice = ether(100)
     let escrowAmount = ether(20)
+    console.log('!!!', ethers.provider)
+
     beforeEach(async () => {
 
         //setup accounts 
